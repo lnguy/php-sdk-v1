@@ -104,7 +104,7 @@ class RestClient
      * @return Response A Http Response.
      * @throws RestException Thrown if the request fails or times out.
      */
-    private function executeRequest(Client $context, $uri, array $params, array $extraHeaders, $timeout)
+    private function executeRequest(Client $context, $uri, array $params, $timeout)
     {
         $context->setOptions(array(Constants::REST_TIMEOUT_KEY => ($timeout / 1000)));
 
@@ -115,18 +115,12 @@ class RestClient
 
             $headers = array(Constants::ACCEPT_HEADER_NAME => Constants::ACCEPT_JSON_HEADER_VALUE,
                 Constants::CONTENT_TYPE_HEADER_NAME => Constants::CONTENT_TYPE_HEADER_VALUE);
-            foreach ($extraHeaders as $item) {
-                array_push($headers, $item);
-            }
         } else {
             $context->setMethod(Constants::HTTP_GET_KEY)
                 ->setParameterGet($params);
 
             $headers = array(Constants::ACCEPT_HEADER_NAME => Constants::ACCEPT_JSON_HEADER_VALUE,
                 Constants::CONTENT_TYPE_HEADER_NAME => Constants::ACCEPT_JSON_HEADER_VALUE);
-            foreach ($extraHeaders as $item) {
-                array_push($headers, $item);
-            }
         }
 
         if (count($context->getCookies()) > 0) {

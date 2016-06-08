@@ -30,6 +30,8 @@ namespace MCSDK\utils;
  */
 class HttpUtils
 {
+
+    const HTTP_PARTS_REGEX = '/^([a-z]{4,5}:\/\/[^\/]+)(\/[^?]+)(\?.*)?$/i';
     private static $_mobileConnectCookieNames;
 
     /**
@@ -116,7 +118,8 @@ class HttpUtils
     public static function getHTTPParamsAsArray($url)
     {
         $paramsAsArray = array();
-        $params = parse_url($url)["query"];
+
+        $params = preg_replace(self::HTTP_PARTS_REGEX, '$3', urldecode($url));
         $queries = explode('&', $params);
         if (count($queries) > 0) {
             foreach ($queries as $queryString) {
@@ -139,8 +142,7 @@ class HttpUtils
      */
     public static function getHTTPURI($url)
     {
-        $parsedUrl = parse_url($url);
-        return $parsedUrl["scheme"] . "://" . $parsedUrl["host"];
+        return preg_replace(self::HTTP_PARTS_REGEX, '$1', urldecode($url));
     }
 
     /**
@@ -150,8 +152,8 @@ class HttpUtils
      * @return string the http path portion of this url
      */
     public static function getHTTPPath($url)
-    {   
-        return parse_url($url)["path"];
+    {
+        return preg_replace(self::HTTP_PARTS_REGEX, '$2', urldecode($url));
     }
 
 }

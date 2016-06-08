@@ -111,6 +111,7 @@ class DiscoveryImpl implements IDiscovery
         $cacheKey = DiscoveryCacheKey::newWithDetails($optionsToBeUsed->getIdentifiedMCC(), $optionsToBeUsed->getIdentifiedMNC());
 
         $cachedValue = $this->getCachedValue($cacheKey);
+
         if (!is_null($cachedValue)) {
             $callback->completed($cachedValue);
 
@@ -124,10 +125,7 @@ class DiscoveryImpl implements IDiscovery
 
             $timeout = $optionsToBeUsed->getTimeout();
 
-            //Extra header to be merged into headers (contains x-source-ip header)
-            $extraHeaders = array(Constants::X_SOURCE_IP_HEADER_NAME => $optionsToBeUsed->getClientIP());
-
-            $restResponse = $this->_restClient->callRestEndPoint($context, HttpUtils::getHTTPURI($httpGet), HttpUtils::getHTTPPath($httpGet), HttpUtils::getHTTPParamsAsArray($httpGet), $extraHeaders, $timeout, $currentCookies);
+            $restResponse = $this->_restClient->callRestEndPoint($context, HttpUtils::getHTTPURI($httpGet), HttpUtils::getHTTPPath($httpGet), HttpUtils::getHTTPParamsAsArray($httpGet), $timeout, $currentCookies);
 
             $discoveryResponse = $this->buildDiscoveryResponse($restResponse->getStatusCode(), $restResponse->getHeaders(), JsonUtils::parseJson($restResponse->getResponse()));
 
@@ -182,12 +180,7 @@ class DiscoveryImpl implements IDiscovery
 
             $timeout = $optionsToBeUsed->getTimeout();
 
-            //Extra header to be merged into headers (contains x-source-ip header)s
-            $extraHeaders = array(Constants::X_SOURCE_IP_HEADER_NAME => $optionsToBeUsed->getClientIP());
-
-            $restResponse = $this->_restClient->callRestEndPoint($context, HttpUtils::getHTTPURI($httpGet), HttpUtils::getHTTPPath($httpGet),
-                HttpUtils::getHTTPParamsAsArray($httpGet), $extraHeaders,  $timeout);
-
+            $restResponse = $this->_restClient->callRestEndPoint($context, HttpUtils::getHTTPURI($httpGet), HttpUtils::getHTTPPath($httpGet), HttpUtils::getHTTPParamsAsArray($httpGet), $timeout);
 
             $callback->completed($this->buildDiscoveryResponse($restResponse->getStatusCode(), $restResponse->getHeaders(), JsonUtils::parseJson($restResponse->getResponse())));
         } catch (RestException $ex) {
@@ -270,8 +263,6 @@ class DiscoveryImpl implements IDiscovery
         }
         $this->validateDiscoveryParametersMCCMNC($clientId, $clientSecret, $redirectURI, $selectedMCC, $selectedMNC, $callback);
 
-        $optionsToBeUsed = $this->getOptionsToBeUsedWithTimeout($specifiedOptions);
-        
         $cacheKey = DiscoveryCacheKey::newWithDetails($selectedMCC, $selectedMNC);
         $cachedValue = $this->getCachedValue($cacheKey);
         if (!is_null($cachedValue)) {
@@ -288,10 +279,7 @@ class DiscoveryImpl implements IDiscovery
 
             $timeout = $specifiedOptions->getTimeout();
 
-            //Extra header to be merged into headers (contains x-source-ip header)
-            $extraHeaders = array(Constants::X_SOURCE_IP_HEADER_NAME => $optionsToBeUsed->getClientIP());
-
-            $restResponse = $this->_restClient->callRestEndPoint($context, HttpUtils::getHTTPURI($httpGet), HttpUtils::getHTTPPath($httpGet), HttpUtils::getHTTPParamsAsArray($httpGet), $extraHeaders, $timeout, $currentCookies);
+            $restResponse = $this->_restClient->callRestEndPoint($context, HttpUtils::getHTTPURI($httpGet), HttpUtils::getHTTPPath($httpGet), HttpUtils::getHTTPParamsAsArray($httpGet), $timeout, $currentCookies);
 
             $callback->completed($this->buildDiscoveryResponse($restResponse->getStatusCode(), $restResponse->getHeaders(), JsonUtils::parseJson($restResponse->getResponse())));
         } catch (RestException $ex) {
@@ -396,7 +384,8 @@ class DiscoveryImpl implements IDiscovery
 
             return;
         }
-        $this->_discoveryCache->remove($key);
+
+        unset($this->_discoveryCache->{$key});
     }
 
     /**
@@ -605,7 +594,6 @@ class DiscoveryImpl implements IDiscovery
         $uri->addParameter(Constants::SELECTED_MNC_PARAMETER_NAME, $selectedMNC);
 
         return $uri->build();
-
     }
 
     /**
@@ -661,7 +649,7 @@ class DiscoveryImpl implements IDiscovery
      */
     private function buildDiscoveryResponseFromCache(DiscoveryCacheValue $value)
     {
-        return new DiscoveryResponse(true, $value->getTtl(), 0, new \Zend\Http\Headers(), $value->getValue());
+        return new DiscoveryResponse(true, $value->getTtl(), 0, null, $value->getValue());
     }
 
     /**
