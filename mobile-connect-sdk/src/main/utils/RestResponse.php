@@ -56,10 +56,11 @@ class RestResponse
         $this->headers = $headers;
         $this->response = $response;
 
-        if (!is_null($headers->toArray())) {
+        $this->jsonContent = false;
+        if ((!is_null($headers)) && (!is_null($headers->toArray()))) {
             foreach ($headers->toArray() as $key => $value) {
-                if (strtolower(Constants::CONTENT_TYPE_HEADER_NAME) == strtolower($key)) {
-                    $this->jsonContent = (strtolower(Constants::ACCEPT_JSON_HEADER_VALUE) == strtolower($value));
+                if (strcasecmp(Constants::CONTENT_TYPE_HEADER_NAME, $key) == 0) {
+                    $this->jsonContent = stripos($value, Constants::ACCEPT_JSON_HEADER_VALUE) !== false;
                     break;
                 }
             }
