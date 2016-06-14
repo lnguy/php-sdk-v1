@@ -67,19 +67,20 @@ class RestClient
      * @param string $uri the uri to use when send requests to GSMA
      * @param string $httpPath the rest path string for instance discovery/test/
      * @param array $params the GET/POST parameters to include in the request
+     * @param array $extraHeaders Extra headers to use.
      * @param int $timeout the request timeout in milliseconds
      * @param array $currentCookies the cookies to send to and from GSMA api
      * @return RestResponse the response or an exception on failure
      * @throws \Exception when the rest request has failed in some way
      * @throws RestException Custom exception in the event that the rest service is not responding as expected
      */
-    public function callRestEndPoint(Client $context, $uri, $httpPath, array $params, $timeout, array $currentCookies = null)
+    public function callRestEndPoint(Client $context, $uri, $httpPath, array $params, array $extraHeaders, $timeout, array $currentCookies = null)
     {
         if (!is_null($currentCookies)) {
             $context->setCookies($currentCookies);
         }
 
-        $httpResponse = $this->executeRequest($context, $uri . $httpPath, $params, $timeout);
+        $httpResponse = $this->executeRequest($context, $uri . $httpPath, $params, $extraHeaders, $timeout);
 
         try {
             $restResponse = $this->buildRestResponse($uri, $httpResponse);
@@ -100,6 +101,7 @@ class RestClient
      * @param Client $context The client to use.
      * @param string $uri The request uri.
      * @param array $params The parameters to use.
+     * @param array $extraHeaders Extra headers to use.
      * @param int $timeout The timeout in milliseconds to use.
      * @return Response A Http Response.
      * @throws RestException Thrown if the request fails or times out.

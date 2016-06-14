@@ -270,8 +270,8 @@ class DiscoveryImpl implements IDiscovery
         }
         $this->validateDiscoveryParametersMCCMNC($clientId, $clientSecret, $redirectURI, $selectedMCC, $selectedMNC, $callback);
 
-        $optionsToBeUsed = $this->getOptionsToBeUsedWithTimeout($specifiedOptions);
-        
+        $optionsToBeUsed = $this->getSelectedOperatorDiscoveryOptions($specifiedOptions);
+
         $cacheKey = DiscoveryCacheKey::newWithDetails($selectedMCC, $selectedMNC);
         $cachedValue = $this->getCachedValue($cacheKey);
         if (!is_null($cachedValue)) {
@@ -516,6 +516,33 @@ class DiscoveryImpl implements IDiscovery
         }
 
         return $tmpOptions;
+    }
+
+    /**
+     * Return the options to be used for the completeSelectedOperatorDiscovery call.
+     *
+     * Use caller provided values if passed, use defaults otherwise.
+     *
+     * @param CompleteSelectedOperatorDiscoveryOptions $originalOptions The caller specified options if any.
+     * @return DiscoveryOptions The options to be used.
+     */
+    private function getSelectedOperatorDiscoveryOptions(CompleteSelectedOperatorDiscoveryOptions $originalOptions)
+    {
+        $optionsToBeUsed = new DiscoveryOptions();
+        $optionsToBeUsed->setManuallySelect(true);
+        $optionsToBeUsed->setIdentifiedMCC(null);
+        $optionsToBeUsed->setIdentifiedMNC(null);
+        $optionsToBeUsed->setUsingMobileData(false);
+        $optionsToBeUsed->setCookiesEnabled(true);
+        $optionsToBeUsed->setLocalClientIP(null);
+
+        $tmpOptions = $originalOptions;
+        if (is_null($tmpOptions)) {
+            $tmpOptions = new TimeoutOptions();
+        }
+        $optionsToBeUsed->setTimeout($tmpOptions->getTimeout());
+
+        return $optionsToBeUsed;
     }
 
     /**

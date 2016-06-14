@@ -62,6 +62,6 @@ class RestClientTest extends PHPUnit_Framework_TestCase
         $timeout = 100000;
         $currentCookies = array();
 
-        $this->restClient->callRestEndPoint($context, $uri, $httpPath, $params, $timeout, $currentCookies);
+        $this->restClient->callRestEndPoint($context, $uri, $httpPath, $params, array(), $timeout, $currentCookies);
     }
 }

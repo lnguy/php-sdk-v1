@@ -203,7 +203,7 @@ class OIDCImpl implements IOIDC
 
             $context = $this->restClient->getHttpClientContext($clientId, $clientSecret, $tokenURI);
 
-            $restResponse = $this->restClient->callRestEndPoint($context, HttpUtils::getHTTPURI($uri), HttpUtils::getHTTPPath($uri), HttpUtils::getHTTPParamsAsArray($uri), $optionsToUse->getTimeout());
+            $restResponse = $this->restClient->callRestEndPoint($context, HttpUtils::getHTTPURI($uri), HttpUtils::getHTTPPath($uri), HttpUtils::getHTTPParamsAsArray($uri), array(), $optionsToUse->getTimeout());
 
             $requestTokenResponse = JsonUtils::parseRequestTokenResponse(new \DateTime("now", new \DateTimeZone("Europe/London")), $restResponse->getResponse());
             $requestTokenResponse->setResponseCode($restResponse->getStatusCode());

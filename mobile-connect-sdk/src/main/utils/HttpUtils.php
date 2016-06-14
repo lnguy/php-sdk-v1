@@ -116,7 +116,7 @@ class HttpUtils
     public static function getHTTPParamsAsArray($url)
     {
         $paramsAsArray = array();
-        $params = parse_url($url)["query"];
+        $params = parse_url(urldecode($url))["query"];
         $queries = explode('&', $params);
         if (count($queries) > 0) {
             foreach ($queries as $queryString) {
@@ -139,7 +139,7 @@ class HttpUtils
      */
     public static function getHTTPURI($url)
     {
-        $parsedUrl = parse_url($url);
+        $parsedUrl = parse_url(urldecode($url));
         return $parsedUrl["scheme"] . "://" . $parsedUrl["host"];
     }
 
@@ -150,8 +150,8 @@ class HttpUtils
      * @return string the http path portion of this url
      */
     public static function getHTTPPath($url)
-    {   
-        return parse_url($url)["path"];
+    {
+        return parse_url(urldecode($url))["path"];
     }
 
 }
