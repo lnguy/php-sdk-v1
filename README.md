@@ -36,7 +36,7 @@ PHP SDK Demo as your server root, you may configue it thus, as with Apache confi
 DocumentRoot "/local-path/php-sdk-v1/mobile-connect-demo/src/main"
 ```
 
-Installing the PHP server side SDK:
+## Installing the PHP server side SDK
 Standing in the project folder, change directory to mobile-connect-sdk.
 Issue the command:
 
@@ -46,7 +46,7 @@ php composer.phar install
 
 This will import all the dependencies for the server side SDK.
 
-Installing the PHP client side SDK:
+## Installing the PHP client side SDK
 Standing in the project folder, change directory to mobile-connect-demo.
 Issue the command:
 
